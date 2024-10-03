@@ -6,13 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/celestiaorg/celestia-app/v2/app"
-	"github.com/celestiaorg/celestia-app/v2/app/encoding"
-	"github.com/celestiaorg/celestia-app/v2/pkg/user"
-	"github.com/celestiaorg/celestia-app/v2/test/util/testfactory"
-	shareMock "github.com/celestiaorg/celestia-node/share/shwap/getters/mock"
-	"github.com/celestiaorg/go-square/square"
-	bytes2 "github.com/tendermint/tendermint/libs/bytes"
 	"slices"
 	"sort"
 	"testing"
@@ -24,19 +17,24 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/crypto/merkle"
+	bytes2 "github.com/tendermint/tendermint/libs/bytes"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	"github.com/tendermint/tendermint/proto/tendermint/types"
 	coretypes "github.com/tendermint/tendermint/types"
 
+	"github.com/celestiaorg/celestia-app/v2/app"
+	"github.com/celestiaorg/celestia-app/v2/app/encoding"
 	"github.com/celestiaorg/celestia-app/v2/pkg/appconsts"
 	pkgproof "github.com/celestiaorg/celestia-app/v2/pkg/proof"
+	"github.com/celestiaorg/celestia-app/v2/pkg/user"
 	"github.com/celestiaorg/celestia-app/v2/pkg/wrapper"
-
+	"github.com/celestiaorg/celestia-app/v2/test/util/testfactory"
 	"github.com/celestiaorg/go-header/store"
 	"github.com/celestiaorg/go-square/blob"
 	"github.com/celestiaorg/go-square/inclusion"
 	squarens "github.com/celestiaorg/go-square/namespace"
 	appshares "github.com/celestiaorg/go-square/shares"
+	"github.com/celestiaorg/go-square/square"
 	"github.com/celestiaorg/nmt"
 	"github.com/celestiaorg/rsmt2d"
 
@@ -50,6 +48,7 @@ import (
 	"github.com/celestiaorg/celestia-node/share/ipld"
 	"github.com/celestiaorg/celestia-node/share/shwap"
 	"github.com/celestiaorg/celestia-node/share/shwap/getters/mock"
+	shareMock "github.com/celestiaorg/celestia-node/share/shwap/getters/mock"
 )
 
 func TestBlobService_Get(t *testing.T) {
