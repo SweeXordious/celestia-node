@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	"slices"
 	"sync"
 
@@ -671,9 +672,17 @@ func (s *Service) retrieveBlobProof(
 				if err != nil {
 					return nil, nil, err
 				}
-
+				tmShareToRowRootProofs := make([]*tmproto.NMTProof, 0, len(shareToRowRootProofs))
+				for _, proof := range shareToRowRootProofs {
+					tmShareToRowRootProofs = append(tmShareToRowRootProofs, &tmproto.NMTProof{
+						Start:    proof.Start,
+						End:      proof.End,
+						Nodes:    proof.Nodes,
+						LeafHash: proof.LeafHash,
+					})
+				}
 				proof := Proof{
-					ShareToRowRootProof: shareToRowRootProofs,
+					ShareToRowRootProof: tmShareToRowRootProofs,
 					RowToDataRootProof: core.RowProof{
 						RowRoots: rowRoots,
 						Proofs:   rowProofs,
