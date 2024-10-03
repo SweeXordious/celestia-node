@@ -43,7 +43,11 @@ type namespaceToRowRootProof []*nmt.Proof
 // Verify takes a blob and a data root and verifies if the
 // provided blob was committed to the given data root.
 func (p *Proof) Verify(blob *Blob, dataRoot []byte) (bool, error) {
-	blobCommitment, err := inclusion.CreateCommitment(ToAppBlobs(blob)[0], merkle.HashFromByteSlices, appconsts.DefaultSubtreeRootThreshold)
+	blobCommitment, err := inclusion.CreateCommitment(
+		ToAppBlobs(blob)[0],
+		merkle.HashFromByteSlices,
+		appconsts.DefaultSubtreeRootThreshold,
+	)
 	if err != nil {
 		return false, err
 	}

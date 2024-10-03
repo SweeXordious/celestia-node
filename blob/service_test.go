@@ -48,7 +48,6 @@ import (
 	"github.com/celestiaorg/celestia-node/share/ipld"
 	"github.com/celestiaorg/celestia-node/share/shwap"
 	"github.com/celestiaorg/celestia-node/share/shwap/getters/mock"
-	shareMock "github.com/celestiaorg/celestia-node/share/shwap/getters/mock"
 )
 
 func TestBlobService_Get(t *testing.T) {
@@ -443,7 +442,7 @@ func TestBlobService_Get(t *testing.T) {
 			name: "get blob internal error",
 			doFn: func() (interface{}, error) {
 				ctrl := gomock.NewController(t)
-				shareGetterMock := shareMock.NewMockGetter(ctrl)
+				shareGetterMock := mock.NewMockGetter(ctrl)
 				shareGetterMock.EXPECT().
 					GetEDS(gomock.Any(), gomock.Any()).
 					DoAndReturn(
@@ -1108,9 +1107,9 @@ func TestBlobVerify(t *testing.T) {
 
 	// create the blob from the data
 	blob, err := NewBlob(
-		uint8(blobs[5].ShareVersion),
+		uint8(blobs[5].GetShareVersion()),
 		nss[5].Bytes(),
-		blobs[5].Data,
+		blobs[5].GetData(),
 	)
 	require.NoError(t, err)
 
