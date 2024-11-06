@@ -133,7 +133,7 @@ func (cl *Listener) Stop(ctx context.Context) error {
 
 // runSubscriber runs a subscriber to receive event data of new signed blocks. It will attempt to
 // resubscribe in case error happens during listening of subscription
-func (cl *Listener) runSubscriber(ctx context.Context, sub <-chan types.EventDataSignedBlock) {
+func (cl *Listener) runSubscriber(ctx context.Context, sub <-chan *types.EventDataSignedBlock) {
 	defer close(cl.closed)
 	for {
 		err := cl.listen(ctx, sub)
@@ -154,7 +154,7 @@ func (cl *Listener) runSubscriber(ctx context.Context, sub <-chan types.EventDat
 	}
 }
 
-func (cl *Listener) resubscribe(ctx context.Context) <-chan types.EventDataSignedBlock {
+func (cl *Listener) resubscribe(ctx context.Context) <-chan *types.EventDataSignedBlock {
 	err := cl.fetcher.Stop(ctx)
 	if err != nil {
 		log.Warnw("listener: unsubscribe", "err", err)
@@ -180,7 +180,7 @@ func (cl *Listener) resubscribe(ctx context.Context) <-chan types.EventDataSigne
 // listen kicks off a loop, listening for new block events from Core,
 // generating ExtendedHeaders and broadcasting them to the header-sub
 // gossipsub network.
-func (cl *Listener) listen(ctx context.Context, sub <-chan types.EventDataSignedBlock) error {
+func (cl *Listener) listen(ctx context.Context, sub <-chan *types.EventDataSignedBlock) error {
 	defer log.Info("listener: listening stopped")
 	timeout := time.NewTimer(cl.listenerTimeout)
 	defer timeout.Stop()
@@ -220,7 +220,7 @@ func (cl *Listener) listen(ctx context.Context, sub <-chan types.EventDataSigned
 	}
 }
 
-func (cl *Listener) handleNewSignedBlock(ctx context.Context, b types.EventDataSignedBlock) error {
+func (cl *Listener) handleNewSignedBlock(ctx context.Context, b *types.EventDataSignedBlock) error {
 	ctx, span := tracer.Start(ctx, "handle-new-signed-block")
 	defer span.End()
 	span.SetAttributes(
@@ -242,6 +242,8 @@ func (cl *Listener) handleNewSignedBlock(ctx context.Context, b types.EventDataS
 	if err != nil {
 		return fmt.Errorf("storing EDS: %w", err)
 	}
+
+	eds = nil
 
 	syncing, err := cl.fetcher.IsSyncing(ctx)
 	if err != nil {
@@ -268,5 +270,6 @@ func (cl *Listener) handleNewSignedBlock(ctx context.Context, b types.EventDataS
 			"height", b.Header.Height,
 			"err", err)
 	}
+	b = nil
 	return nil
 }

@@ -190,7 +190,7 @@ func (f *BlockFetcher) ValidatorSet(ctx context.Context, height *int64) (*types.
 
 // SubscribeNewBlockEvent subscribes to new block events from Core, returning
 // a new block event channel on success.
-func (f *BlockFetcher) SubscribeNewBlockEvent(ctx context.Context) (<-chan types.EventDataSignedBlock, error) {
+func (f *BlockFetcher) SubscribeNewBlockEvent(ctx context.Context) (<-chan *types.EventDataSignedBlock, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	f.cancel = cancel
 	f.doneCh = make(chan struct{})
@@ -200,7 +200,7 @@ func (f *BlockFetcher) SubscribeNewBlockEvent(ctx context.Context) (<-chan types
 		return nil, err
 	}
 
-	signedBlockCh := make(chan types.EventDataSignedBlock)
+	signedBlockCh := make(chan *types.EventDataSignedBlock)
 	go func() {
 		defer close(f.doneCh)
 		defer close(signedBlockCh)
@@ -222,7 +222,7 @@ func (f *BlockFetcher) SubscribeNewBlockEvent(ctx context.Context) (<-chan types
 					return
 				}
 				select {
-				case signedBlockCh <- types.EventDataSignedBlock{
+				case signedBlockCh <- &types.EventDataSignedBlock{
 					Header:       signedBlock.Header,
 					Commit:       signedBlock.Commit,
 					ValidatorSet: signedBlock.ValidatorSet,
