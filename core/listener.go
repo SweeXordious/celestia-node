@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	"github.com/tendermint/tendermint/types"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -245,31 +244,30 @@ func (cl *Listener) handleNewSignedBlock(ctx context.Context, b *types.EventData
 
 	eds = nil
 
-	syncing, err := cl.fetcher.IsSyncing(ctx)
-	if err != nil {
-		return fmt.Errorf("getting sync state: %w", err)
-	}
+	//syncing, err := cl.fetcher.IsSyncing(ctx)
+	//if err != nil {
+	//	return fmt.Errorf("getting sync state: %w", err)
+	//}
 
 	// notify network of new EDS hash only if core is already synced
-	if !syncing {
-		err = cl.hashBroadcaster(ctx, shrexsub.Notification{
-			DataHash: eh.DataHash.Bytes(),
-			Height:   eh.Height(),
-		})
-		if err != nil && !errors.Is(err, context.Canceled) {
-			log.Errorw("listener: broadcasting data hash",
-				"height", b.Header.Height,
-				"hash", b.Header.Hash(), "err", err) // TODO: hash or datahash?
-		}
-	}
-
-	// broadcast new ExtendedHeader, but if core is still syncing, notify only local subscribers
-	err = cl.headerBroadcaster.Broadcast(ctx, eh, pubsub.WithLocalPublication(syncing))
-	if err != nil && !errors.Is(err, context.Canceled) {
-		log.Errorw("listener: broadcasting next header",
-			"height", b.Header.Height,
-			"err", err)
-	}
-	b = nil
+	//if !syncing {
+	//	err = cl.hashBroadcaster(ctx, shrexsub.Notification{
+	//		DataHash: eh.DataHash.Bytes(),
+	//		Height:   eh.Height(),
+	//	})
+	//	if err != nil && !errors.Is(err, context.Canceled) {
+	//		log.Errorw("listener: broadcasting data hash",
+	//			"height", b.Header.Height,
+	//			"hash", b.Header.Hash(), "err", err) // TODO: hash or datahash?
+	//	}
+	//}
+	//
+	//// broadcast new ExtendedHeader, but if core is still syncing, notify only local subscribers
+	//err = cl.headerBroadcaster.Broadcast(ctx, eh, pubsub.WithLocalPublication(syncing))
+	//if err != nil && !errors.Is(err, context.Canceled) {
+	//	log.Errorw("listener: broadcasting next header",
+	//		"height", b.Header.Height,
+	//		"err", err)
+	//}
 	return nil
 }
