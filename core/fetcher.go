@@ -130,6 +130,7 @@ func (f *BlockFetcher) GetSignedBlock(ctx context.Context, height *int64) (*core
 	if err != nil {
 		return nil, err
 	}
+	block.Data = types.Data{}
 	return &coretypes.ResultSignedBlock{
 		Header:       block.Header,
 		Commit:       *commit,
@@ -228,6 +229,8 @@ func (f *BlockFetcher) SubscribeNewBlockEvent(ctx context.Context) (<-chan *type
 					ValidatorSet: signedBlock.ValidatorSet,
 					Data:         signedBlock.Data,
 				}:
+					signedBlock = nil
+					signedBlock.Data = types.Data{}
 				case <-ctx.Done():
 					return
 				}
