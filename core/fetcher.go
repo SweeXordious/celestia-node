@@ -229,8 +229,8 @@ func (f *BlockFetcher) SubscribeNewBlockEvent(ctx context.Context) (<-chan *type
 					ValidatorSet: signedBlock.ValidatorSet,
 					Data:         signedBlock.Data,
 				}:
-					signedBlock = nil
 					signedBlock.Data = types.Data{}
+					signedBlock = nil
 				case <-ctx.Done():
 					return
 				}
